@@ -1,0 +1,31 @@
+// Google app script to combine data of all the worksheets into one Compilation sheet in Google sheets.
+// Written by Shivam Tiwari at Directorate of Public Instructions, Government of Madhya Pradesh
+
+function compileAllSheets() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var compilationSheet = spreadsheet.getSheetByName('Compilation'); // Change 'Compilation' to the name of your compilation sheet
+
+  if (!compilationSheet) {
+    compilationSheet = spreadsheet.insertSheet('Compilation'); // Create the compilation sheet if it doesn't exist
+  }
+
+  var sheets = spreadsheet.getSheets();
+
+  // Clear the compilation sheet
+  compilationSheet.clear();
+
+  // Loop through all sheets (excluding the compilation sheet itself)
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].getName() !== 'Compilation') {
+      var sheet = sheets[i];
+      var sheetData = sheet.getDataRange().getValues();
+      var sheetFormats = sheet.getDataRange().getRichTextValues();
+      
+      // Copy values
+      compilationSheet.getRange(compilationSheet.getLastRow() + 1, 1, sheetData.length, sheetData[0].length).setValues(sheetData);
+
+      // Copy formatting
+      compilationSheet.getRange(compilationSheet.getLastRow() + 1, 1, sheetData.length, sheetData[0].length).setRichTextValues(sheetFormats);
+    }
+  }
+}
